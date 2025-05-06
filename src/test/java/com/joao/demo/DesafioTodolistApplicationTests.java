@@ -46,6 +46,25 @@ class DesafioTodolistApplicationTests {
 		.expectStatus().isBadRequest();
 		
 	}
+	
+	@Test
+	void testGetAllTodos() {
+		var todo = new Todo("todo 1", "desc todo 1", false, 1);
 
+		webTestClient.post()
+		.uri("/todos")
+		.bodyValue(todo)
+		.exchange();
 
+		webTestClient
+			.get()
+			.uri("/todos")
+			.exchange()
+			.expectStatus().isOk()
+			.expectBody()
+			.jsonPath("$").isArray()
+			.jsonPath("$.length()").isEqualTo(1)
+			.jsonPath("$[0].nome").isEqualTo(todo.getNome());
+	}
+	
 }
