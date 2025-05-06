@@ -23,7 +23,6 @@ public class TodoService {
 	}
 
 	public List<Todo> list() {
-		//Ordenando a consulta por prioridade e logo em seguida por nome
 		Sort sort = Sort.by("prioridade").descending().and(Sort.by("nome").ascending());
 		return todoRepository.findAll(sort);
 	}
