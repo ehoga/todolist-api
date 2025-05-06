@@ -12,8 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.joao.demo.entity.Todo;
-
-import service.TodoService;
+import com.joao.demo.service.TodoService;
 
 @Controller
 @RequestMapping("/todos")

@@ -1,4 +1,4 @@
-package service;
+package com.joao.demo.service;
 
 import java.util.List;
 
