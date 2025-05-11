@@ -1,0 +1,64 @@
+package com.joao.demo.entity;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table( name = "users")
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @NotNull
+    private String nome;
+    @NotNull
+    private String senha;
+
+    @OneToMany
+    List<Todo> todos = new ArrayList<>();
+
+    public User() {
+
+    }
+
+    public User(String nome, String senha) {
+        this.nome = nome;
+        this.senha = senha;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public @NotNull String getNome() {
+        return nome;
+    }
+
+    public void setNome(@NotNull String nome) {
+        this.nome = nome;
+    }
+
+    public @NotNull String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(@NotNull String senha) {
+        this.senha = senha;
+    }
+
+    public List<Todo> getTodos() {
+        return todos;
+    }
+
+    public void addTodo(Todo todo){
+        todos.add(todo);
+    }
+
+    public void removeTodo(Todo todo){
+        todos.remove(todo);
+    }
+}

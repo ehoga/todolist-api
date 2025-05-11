@@ -2,14 +2,7 @@ package com.joao.demo.controller;
 
 import java.util.List;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.joao.demo.entity.Todo;
 import com.joao.demo.service.TodoService;
@@ -26,22 +19,28 @@ public class TodoController {
 	}
 	
 	@PostMapping
-	List<Todo> create(@RequestBody @Valid Todo todo) {
+	public List<Todo> create(@RequestBody @Valid Todo todo) {
 		return todoService.create(todo);
+	}
+
+	@GetMapping("{id}")
+	public Todo findById(@PathVariable Long id){
+		return todoService.findById(id);
 	}
 	
 	@GetMapping
-	List<Todo> list() {
+	public List<Todo> list() {
 		return todoService.list();
 	}
-	
-	@PutMapping
-	List<Todo> update(@RequestBody Todo todo) {
+
+	@PutMapping("{id}")
+	public List<Todo> atualizarStatus(@PathVariable Long id, @RequestBody Todo todo){
+		todo.setId(id);
 		return todoService.update(todo);
 	}
 	
 	@DeleteMapping("{id}")
-	List<Todo> delete(@PathVariable Long id) {
+	public List<Todo> delete(@PathVariable Long id) {
 		return todoService.delete(id);
 	}
 }

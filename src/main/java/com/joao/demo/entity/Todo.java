@@ -1,10 +1,6 @@
 package com.joao.demo.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
@@ -14,23 +10,32 @@ public class Todo {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@NotBlank
-	private String nome;
+	private String title;
 	@NotBlank
-	private String descricao;
-	private Boolean realizado;
-	private Integer prioridade;
-	
+	private String description;
+	private Boolean done;
+	private Integer priority;
+
+	@ManyToOne
+	private User user;
+
 	public Todo() {
-		
 	}
 	
-	public Todo(String nome, String descricao, Boolean realizado, Integer prioridade) {
-		this.nome = nome;
-		this.descricao = descricao;
-		this.realizado = realizado;
-		this.prioridade = prioridade;
+	public Todo(String  title, String description, Boolean done, Integer priority) {
+		this.title = title;
+		this.description = description;
+		this.done = done;
+		this.priority = priority;
 	}
 
+	public @NotBlank String getTitle() {
+		return title;
+	}
+
+	public void setTitle(@NotBlank String title) {
+		this.title = title;
+	}
 	public Long getId() {
 		return id;
 	}
@@ -39,36 +44,36 @@ public class Todo {
 		this.id = id;
 	}
 
-	public String getNome() {
-		return nome;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setNome(String nome) {
-		this.nome = nome;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
-	public String getDescricao() {
-		return descricao;
+	public Boolean getDone() {
+		return done;
 	}
 
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
+	public void setDone(Boolean done) {
+		this.done = done;
 	}
 
-	public Boolean getRealizado() {
-		return realizado;
+	public Integer getPriority() {
+		return priority;
 	}
 
-	public void setRealizado(Boolean realizado) {
-		this.realizado = realizado;
+	public void setPriority(Integer priority) {
+		this.priority = priority;
 	}
 
-	public Integer getPrioridade() {
-		return prioridade;
+	public User getUser() {
+		return user;
 	}
 
-	public void setPrioridade(Integer prioridade) {
-		this.prioridade = prioridade;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 }

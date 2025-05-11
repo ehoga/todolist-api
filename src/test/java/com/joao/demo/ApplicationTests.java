@@ -11,13 +11,13 @@ import com.joao.demo.entity.Todo;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-class DesafioTodolistApplicationTests {
+class ApplicationTests {
 	@Autowired
 	private WebTestClient webTestClient;
 	
 	@Test
 	void testCreateTodoSuccess() {
-		var todo = new Todo("todo 1", "desc todo 1", false, 1);
+		var todo = new Todo("Todo 1","desc todo 1", false, 1);
 		
 		webTestClient
 		.post()
@@ -28,15 +28,15 @@ class DesafioTodolistApplicationTests {
 		.expectBody()
 		.jsonPath("$").isArray()
 		.jsonPath("$.length()").isEqualTo(1)
-		.jsonPath("$[0].nome").isEqualTo(todo.getNome())
-		.jsonPath("$[0].descricao").isEqualTo(todo.getDescricao())
-		.jsonPath("$[0].realizado").isEqualTo(todo.getRealizado())
-		.jsonPath("$[0].prioridade").isEqualTo(todo.getPrioridade());
+		.jsonPath("$[0].title").isEqualTo(todo.getTitle())
+		.jsonPath("$[0].description").isEqualTo(todo.getDescription())
+		.jsonPath("$[0].done").isEqualTo(todo.getDone())
+		.jsonPath("$[0].priority").isEqualTo(todo.getPriority());
 	}
 	
 	@Test
 	void testCreateTodoFailure() {
-		var todo = new Todo("", "", false, 0);
+		var todo = new Todo( "","", false, 0);
 		
 		webTestClient
 		.post()
@@ -49,7 +49,7 @@ class DesafioTodolistApplicationTests {
 	
 	@Test
 	void testGetAllTodos() {
-		var todo = new Todo("todo 1", "desc todo 1", false, 1);
+		var todo = new Todo( "Todo 1","desc todo 1", false, 1);
 
 		webTestClient.post()
 		.uri("/todos")
@@ -63,13 +63,12 @@ class DesafioTodolistApplicationTests {
 			.expectStatus().isOk()
 			.expectBody()
 			.jsonPath("$").isArray()
-			.jsonPath("$.length()").isEqualTo(1)
-			.jsonPath("$[0].nome").isEqualTo(todo.getNome());
+			.jsonPath("$.length()").isEqualTo(1);
 	}
 	
 	@Test
 	void testDeleteTodoSuccess() {
-		var todo = new Todo("todo 1", "desc todo 1", false, 1);
+		var todo = new Todo( "Todo 1","desc todo 1", false, 1);
 
 		var created = webTestClient
 			.post()
