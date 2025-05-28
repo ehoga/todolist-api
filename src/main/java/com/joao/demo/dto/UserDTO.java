@@ -1,0 +1,8 @@
+package com.joao.demo.dto;
+
+import com.joao.demo.entity.Todo;
+
+import java.util.List;
+
+public record UserDTO(String username, String password, String role, List<Todo> todos) {
+}

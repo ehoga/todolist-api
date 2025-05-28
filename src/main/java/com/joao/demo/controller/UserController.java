@@ -1,33 +1,39 @@
 package com.joao.demo.controller;
 
-import com.joao.demo.entity.User;
+import com.joao.demo.controller.mappers.UserMapper;
+import com.joao.demo.dto.UserDTO;
+import com.joao.demo.entity.UserEntity;
 import com.joao.demo.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("users")
+@RequiredArgsConstructor
 public class UserController {
-    private UserService userService;
 
-    public UserController(UserService userService) {this.userService = userService;}
+    private final UserMapper mapper;
+    private final UserService service;
 
     @GetMapping
-    public List<User> getAllUsers(){
-        return userService.list();
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        List<UserEntity> entities = service.list();
+        List<UserDTO> dtos = entities.stream()
+                .map(mapper::toDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id){
-        return userService.findById(id).map(ResponseEntity :: ok).orElse(ResponseEntity.notFound().build());
+    @PostMapping
+    public ResponseEntity<Void> salvar(@RequestBody UserDTO dto){
+        var user = mapper.toEntity(dto);
+        service.salvar(user);
+        return ResponseEntity.created(URI.create("/users/" + user.getId()))
+                .build();
     }
-
-    @PutMapping("{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user){
-        return userService.update(id, user).map(updatedUser -> ResponseEntity.ok().body(updatedUser))
-                .orElse(ResponseEntity.notFound().build());
-    }
-
 }

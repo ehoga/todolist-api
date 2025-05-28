@@ -1,13 +1,11 @@
 package com.joao.demo.controller;
 
-import java.util.List;
-
-import org.springframework.web.bind.annotation.*;
-
 import com.joao.demo.entity.Todo;
 import com.joao.demo.service.TodoService;
-
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/todos")
