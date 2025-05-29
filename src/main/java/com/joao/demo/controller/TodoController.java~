@@ -34,7 +34,7 @@ public class TodoController {
 
 	@PutMapping("{id}")
 	public List<TodoResponseDTO> atualizarStatus(@PathVariable Long id, @RequestBody TodoRequestDTO dto){
-		return todoService.update(id, dto, getUsername());
+		return todoService.update(dto, getUsername());
 	}
 	
 	@DeleteMapping("{id}")

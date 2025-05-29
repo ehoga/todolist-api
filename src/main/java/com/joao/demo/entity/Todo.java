@@ -1,5 +1,6 @@
 package com.joao.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -19,5 +20,6 @@ public class Todo {
 	private Integer priority;
 
 	@ManyToOne
+	@JsonIgnore
 	private UserEntity userEntity;
 }

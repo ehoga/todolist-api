@@ -1,60 +1,91 @@
 package com.joao.demo.service;
 
+import com.joao.demo.controller.mappers.TodoMapper;
+import com.joao.demo.dto.TodoRequestDTO;
+import com.joao.demo.dto.TodoResponseDTO;
 import com.joao.demo.entity.Todo;
+import com.joao.demo.entity.UserEntity;
+import com.joao.demo.exception.UnauthorizedAccessException;
 import com.joao.demo.repository.TodoRepository;
+import com.joao.demo.repository.UserRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TodoService {
+
+	private final UserRepository userRepository;
+	private final TodoMapper todoMapper;
+	private final TodoRepository todoRepository;
 	
-	private TodoRepository todoRepository;
-	
-	public TodoService(TodoRepository todoRepository) {
+	public TodoService(TodoRepository todoRepository, UserRepository userRepository, TodoMapper todoMapper) {
 		this.todoRepository = todoRepository;
+		this.userRepository = userRepository;
+		this.todoMapper = todoMapper;
 	}
 
-	public List<Todo> create(Todo todo) {
+	public List<TodoResponseDTO> create(TodoRequestDTO todoRequestDTO, String username) {
+		Todo todo = todoMapper.toEntity(todoRequestDTO);
+
+		UserEntity userEntity = userRepository.findByUsername(username);
+		todo.setUserEntity(userEntity);
+
 		if (todo.getPriority() == null){
 			Integer maxPriority = todoRepository.findMaxPriority();
 			todo.setPriority((maxPriority != null ? maxPriority : 0) + 1);
 		}
 		todoRepository.save(todo);
-		return list();
+		return list(username);
 	}
 
-	public Todo findById(Long id){
-		return todoRepository.findById(id).orElse(null);
-	}
-
-	public List<Todo> list() {
+	public List<TodoResponseDTO> list(String username) {
 		Sort sort = Sort.by("priority").ascending().and(Sort.by("title").ascending());
-		return todoRepository.findAll(sort);
+		return todoRepository.findAllbyUser(username, sort)
+				.stream()
+				.map(todoMapper::toDTO)
+				.collect(Collectors.toList());
 	}
 
-	public List<Todo> update(Todo todo) {
-		Optional<Todo> existingTodoOpt = todoRepository.findById(todo.getId());
+	public List<TodoResponseDTO> update(Long id,TodoRequestDTO dto, String username) {
+		Optional<Todo> existingTodoOpt = todoRepository.findById(id);
 
 		if (existingTodoOpt.isPresent()){
 			Todo existing = existingTodoOpt.get();
 
-			if(todo.getTitle() != null) existing.setTitle(todo.getTitle());
-			if(todo.getDescription() != null) existing.setDescription(todo.getDescription());
-			if(todo.getDone() != null) existing.setDone(todo.getDone());
-			if(todo.getPriority() != null) existing.setPriority(todo.getPriority());
+			if (!existing.getUserEntity().getUsername().equals(username)) throw new UnauthorizedAccessException("Usuario nao autorizado");
+
+			if(dto.title() != null) existing.setTitle(dto.title());
+			if(dto.description() != null) existing.setDescription(dto.description());
+			if(dto.done() != null) existing.setDone(dto.done());
+			if(dto.priority() != null) existing.setPriority(dto.priority());
 
 			todoRepository.save(existing);
 		}
 
-		return list();
+		return list(username);
 	}
 
-	public List<Todo> delete(Long id) {
-		todoRepository.deleteById(id);;
-		return list();
+	public List<TodoResponseDTO> delete(Long id, String username) {
+		Optional<Todo> existingTodoOpt = todoRepository.findById(id);
+
+
+		if (existingTodoOpt.isPresent()) {
+			Todo existing = existingTodoOpt.get();
+
+
+
+			if (existing.getUserEntity().getUsername().equals(username)) {
+				todoRepository.delete(existing);
+			}else {
+				throw new UnauthorizedAccessException("Usuario nao autorizado");
+			}
+		}
+
+		return list(username);
 	}
 
 }
