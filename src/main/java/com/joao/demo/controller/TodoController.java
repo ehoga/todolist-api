@@ -23,7 +23,7 @@ public class TodoController {
 	}
 	
 	@PostMapping
-	public List<TodoResponseDTO> create(@RequestBody @Valid TodoRequestDTO dto) {
+	public TodoResponseDTO create(@RequestBody @Valid TodoRequestDTO dto) {
 		return todoService.create(dto, getUsername());
 	}
 	
@@ -33,8 +33,8 @@ public class TodoController {
 	}
 
 	@PutMapping("{id}")
-	public List<TodoResponseDTO> atualizarStatus(@PathVariable Long id, @RequestBody TodoRequestDTO dto){
-		return todoService.update(id, dto, getUsername());
+	public TodoResponseDTO atualizarStatus(@PathVariable Long id,@RequestBody TodoRequestDTO dto){
+		return todoService.update(id ,dto, getUsername());
 	}
 	
 	@DeleteMapping("{id}")
