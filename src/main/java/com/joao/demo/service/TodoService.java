@@ -28,7 +28,7 @@ public class TodoService {
 		this.todoMapper = todoMapper;
 	}
 
-	public List<TodoResponseDTO> create(TodoRequestDTO todoRequestDTO, String username) {
+	public TodoResponseDTO create(TodoRequestDTO todoRequestDTO, String username) {
 		Todo todo = todoMapper.toEntity(todoRequestDTO);
 
 		UserEntity userEntity = userRepository.findByUsername(username);
@@ -38,23 +38,24 @@ public class TodoService {
 			Integer maxPriority = todoRepository.findMaxPriority();
 			todo.setPriority((maxPriority != null ? maxPriority : 0) + 1);
 		}
-		todoRepository.save(todo);
-		return list(username);
+		Todo savedTodo = todoRepository.save(todo);
+        return todoMapper.toDTO(savedTodo);
 	}
 
 	public List<TodoResponseDTO> list(String username) {
-		Sort sort = Sort.by("priority").ascending().and(Sort.by("title").ascending());
+		Sort sort = Sort.by("id").ascending();
 		return todoRepository.findAllbyUser(username, sort)
 				.stream()
 				.map(todoMapper::toDTO)
 				.collect(Collectors.toList());
 	}
 
-	public List<TodoResponseDTO> update(Long id,TodoRequestDTO dto, String username) {
+	public TodoResponseDTO update(Long id, TodoRequestDTO dto, String username) {
 		Optional<Todo> existingTodoOpt = todoRepository.findById(id);
+		Todo existing = null;
 
 		if (existingTodoOpt.isPresent()){
-			Todo existing = existingTodoOpt.get();
+			existing = existingTodoOpt.get();
 
 			if (!existing.getUserEntity().getUsername().equals(username)) throw new UnauthorizedAccessException("Usuario nao autorizado");
 
@@ -66,7 +67,8 @@ public class TodoService {
 			todoRepository.save(existing);
 		}
 
-		return list(username);
+		if(existing == null) throw new UnauthorizedAccessException("Todo não encontrado");
+		return todoMapper.toDTO(existing);
 	}
 
 	public List<TodoResponseDTO> delete(Long id, String username) {
