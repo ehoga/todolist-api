@@ -1,7 +1,7 @@
 spring:
   datasource:
     url: jdbc:mysql://mysql:3306/todolist
-    username: root
+    username: todolist_user
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
 
